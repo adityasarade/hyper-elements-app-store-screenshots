@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "template": {
+    "module": "../templates/app-store-screenshot.tsx",
+    "id": "tidewise.StoreScreenshot",
+    "version": "1.0.0",
+    "sha256": "42b877dd248ebc7c5c8817d80434e177185026ce455237e763ff0620f059dea9"
+  },
+  "formats": [
+    "iphone69",
+    "iphone65",
+    "play"
+  ],
+  "values": {
+    "app": "Tidewise",
+    "headline": "Know the tide before you leave.",
+    "subhead": "High and low water for 1,400 beaches, to the minute.",
+    "screenshot": {
+      "src": "./screens/today.png",
+      "width": 1320,
+      "height": 2868
+    },
+    "backdrop": "deep"
+  },
+  "assets": {
+    "screenshot": {
+      "sha256": "9a69db900053098fb41298d3048c92071eea0bfe1697ce8a38d7d3d2e16dba6a",
+      "source": {
+        "kind": "generated",
+        "tool": "Hyper Elements renderImage()",
+        "script": "scripts/screens.tsx",
+        "note": "The Tidewise app's screens drawn in elements at 1320 by 2868, standing in for simulator captures."
+      }
+    }
+  }
+}

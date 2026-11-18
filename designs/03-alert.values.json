@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "template": {
+    "module": "../templates/app-store-screenshot.tsx",
+    "id": "tidewise.StoreScreenshot",
+    "version": "1.0.0",
+    "sha256": "42b877dd248ebc7c5c8817d80434e177185026ce455237e763ff0620f059dea9"
+  },
+  "formats": [
+    "iphone69",
+    "iphone65",
+    "play"
+  ],
+  "values": {
+    "app": "Tidewise",
+    "headline": "A nudge at slack water.",
+    "subhead": "Pick a beach and a tide. We'll tell you when to go.",
+    "screenshot": {
+      "src": "./screens/alert.png",
+      "width": 1320,
+      "height": 2868
+    },
+    "backdrop": "sea"
+  },
+  "assets": {
+    "screenshot": {
+      "sha256": "5b8337d8c5d317a1b89ec3f93bbe146594e628f661f3dc5742f55678a9b06126",
+      "source": {
+        "kind": "generated",
+        "tool": "Hyper Elements renderImage()",
+        "script": "scripts/screens.tsx",
+        "note": "The Tidewise app's screens drawn in elements at 1320 by 2868, standing in for simulator captures."
+      }
+    }
+  }
+}

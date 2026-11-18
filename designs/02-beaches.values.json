@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "template": {
+    "module": "../templates/app-store-screenshot.tsx",
+    "id": "tidewise.StoreScreenshot",
+    "version": "1.0.0",
+    "sha256": "42b877dd248ebc7c5c8817d80434e177185026ce455237e763ff0620f059dea9"
+  },
+  "formats": [
+    "iphone69",
+    "iphone65",
+    "play"
+  ],
+  "values": {
+    "app": "Tidewise",
+    "headline": "Every beach nearby, at its best hour.",
+    "subhead": "Swim, surf or rock pools: sorted by what the tide is doing.",
+    "screenshot": {
+      "src": "./screens/beaches.png",
+      "width": 1320,
+      "height": 2868
+    },
+    "backdrop": "foam"
+  },
+  "assets": {
+    "screenshot": {
+      "sha256": "f77efea4ae70b60f67097464b84105a120ec11b6998edbebb3543b3e9dd87faa",
+      "source": {
+        "kind": "generated",
+        "tool": "Hyper Elements renderImage()",
+        "script": "scripts/screens.tsx",
+        "note": "The Tidewise app's screens drawn in elements at 1320 by 2868, standing in for simulator captures."
+      }
+    }
+  }
+}
