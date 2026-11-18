@@ -87,7 +87,7 @@ const WEEK = ["Thu", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed"];
 // At k = 3 it's a real 1320 by 2868 screenshot; in the frame below it's drawn smaller.
 // ---------------------------------------------------------------------------------------------
 
-export function TodayScreen({ k, tide = SALTMERE }: { k: number; tide?: Tide }) {
+export function TodayScreen({ k, tide = SALTMERE, os = "ios" }: { k: number; tide?: Tide; os?: OS }) {
   const p = (n: number) => Math.round(n * k * 100) / 100;
   const now = heightAt(tide, tide.now);
   const rising = heightAt(tide, tide.now + 0.1) > now;
@@ -108,7 +108,7 @@ export function TodayScreen({ k, tide = SALTMERE }: { k: number; tide?: Tide }) 
   return (
     <Column style={{ width: p(440), height: p(956), backgroundColor: PAPER, color: INK, fontFamily: SANS, justifyContent: "space-between" }}>
       <Column style={{ gap: p(18) }}>
-        <StatusBar k={k} time={tide.now} />
+        <StatusBar k={k} time={tide.now} os={os} />
 
         <Column style={{ padding: [0, p(22)], gap: p(16) }}>
           {/* Where and when. */}
@@ -218,17 +218,33 @@ export function TodayScreen({ k, tide = SALTMERE }: { k: number; tide?: Tide }) 
         </Column>
       </Column>
 
-      <TabBar k={k} active={0} />
+      <TabBar k={k} active={0} os={os} />
     </Column>
   );
 }
 
-/** The status bar: the time, room for the island, signal, wifi and battery. */
-export function StatusBar({ k, time, color = INK, label }: { k: number; time: number; color?: string; label?: string }) {
+export type OS = "ios" | "android";
+
+/** The status bar: the time (or a carrier), room for the island or the camera, then signal, wifi and battery. */
+export function StatusBar({ k, time, color = INK, label, os = "ios" }: { k: number; time: number; color?: string; label?: string; os?: OS }) {
   const p = (n: number) => Math.round(n * k * 100) / 100;
+  const text = label ?? clock(time).replace(/^0/, "");
+  if (os === "android") {
+    return (
+      <Row style={{ padding: [p(14), p(26), 0, p(28)], height: p(44), alignItems: "center", justifyContent: "space-between" }}>
+        <Text style={{ flex: "none", fontSize: p(15), fontWeight: 600, color }}>{text}</Text>
+        <Svg width={p(62)} height={p(16)} viewBox="0 0 62 16" title="Wifi, full signal and a charged battery">
+          <Path d="M1 5.2 A12.5 12.5 0 0 1 21 5.2 L11 15 Z" style={{ fill: color }} />
+          <Polygon points="26,15 40,15 40,1" style={{ fill: color }} />
+          <Rect x={49} y={1} width={9} height={14} rx={2} style={{ fill: color }} />
+          <Rect x={51.5} y={0} width={4} height={2} rx={0.6} style={{ fill: color }} />
+        </Svg>
+      </Row>
+    );
+  }
   return (
     <Row style={{ padding: [p(19), p(34), 0, p(44)], height: p(54), alignItems: "center", justifyContent: "space-between" }}>
-      <Text style={{ flex: "none", fontSize: p(17), fontWeight: 600, color }}>{label ?? clock(time).replace(/^0/, "")}</Text>
+      <Text style={{ flex: "none", fontSize: p(17), fontWeight: 600, color }}>{text}</Text>
       <Svg width={p(78)} height={p(14)} viewBox="0 0 78 14" title="Full signal, wifi and a charged battery">
         <Rect x={0} y={9} width={3.2} height={4.5} rx={1} style={{ fill: color }} />
         <Rect x={5} y={6.5} width={3.2} height={7} rx={1} style={{ fill: color }} />
@@ -245,12 +261,42 @@ export function StatusBar({ k, time, color = INK, label }: { k: number; time: nu
   );
 }
 
-/** The tab bar, with one tab current. */
-export function TabBar({ k, active }: { k: number; active: number }) {
+/** The gesture handle at the foot of an Android screen. */
+export function GestureHandle({ k, color = INK }: { k: number; color?: string }) {
   const p = (n: number) => Math.round(n * k * 100) / 100;
   return (
+    <Row style={{ justifyContent: "center", padding: [p(6), 0, p(10)] }}>
+      <Svg width={p(108)} height={p(4)} viewBox="0 0 108 4" style={{ flex: "none" }}>
+        <Rect x={0} y={0} width={108} height={4} rx={2} style={{ fill: color, opacity: 0.8 }} />
+      </Svg>
+    </Row>
+  );
+}
+
+/** The tab bar, with one tab current: iOS's, or Android's navigation bar with its pill and the gesture handle. */
+export function TabBar({ k, active, os = "ios" }: { k: number; active: number; os?: OS }) {
+  const p = (n: number) => Math.round(n * k * 100) / 100;
+  const tabs = ["Today", "Beaches", "Alerts", "Tables"] as const;
+  if (os === "android") {
+    return (
+      <Column style={{ backgroundColor: "#FFFFFF", border: { top: `${p(1)}px solid ${RULE}` } }}>
+        <Row style={{ padding: [p(12), p(16), p(4)], justifyContent: "space-between" }}>
+          {tabs.map((tab, i) => (
+            <Column key={tab} style={{ flex: "none", alignItems: "center", gap: p(4), width: p(92) }}>
+              <Column style={{ padding: [p(3), p(19)], borderRadius: p(16), backgroundColor: i === active ? "#D7ECE8" : "#FFFFFF" }}>
+                <Svg width={p(26)} height={p(26)} viewBox="0 0 26 26">{TAB_ICONS[i](i === active ? SEA : "#7E8C8F")}</Svg>
+              </Column>
+              <Text style={{ fontSize: p(12), fontWeight: 600, color: i === active ? INK : "#6E7C7F", textAlign: "center" }}>{tab}</Text>
+            </Column>
+          ))}
+        </Row>
+        <GestureHandle k={k} />
+      </Column>
+    );
+  }
+  return (
     <Row style={{ padding: [p(10), p(30), p(30)], justifyContent: "space-between", border: { top: `${p(1)}px solid ${RULE}` }, backgroundColor: "#FFFFFF" }}>
-      {(["Today", "Beaches", "Alerts", "Tables"] as const).map((tab, i) => (
+      {tabs.map((tab, i) => (
         <Column key={tab} style={{ flex: "none", alignItems: "center", gap: p(4), width: p(76) }}>
           <Svg width={p(26)} height={p(26)} viewBox="0 0 26 26">{TAB_ICONS[i](i === active ? SEA : "#9AA8AB")}</Svg>
           <Text style={{ fontSize: p(11), fontWeight: 600, color: i === active ? SEA : "#8A989B", textAlign: "center" }}>{tab}</Text>
@@ -323,41 +369,40 @@ export function Phone({ screenWidth, device = "iphone", children }: { screenWidt
 }
 
 // ---------------------------------------------------------------------------------------------
-// The backdrop: depth contours, as on a chart of the bay.
+// The backdrop: depth contours, as on a chart of the bay, or nothing but the color.
 // ---------------------------------------------------------------------------------------------
 
 export type Backdrop = "deep" | "foam" | "sea";
+export type Pattern = "contours" | "none";
+export type Colors = { background: string; headline: string; subhead: string; lines: string };
 
 /** Each backdrop's background, headline, subhead and contour colors. */
-export const BACKDROPS: Record<Backdrop, { background: string; headline: string; subhead: string; lines: string; lineOpacity: number }> = {
-  deep: { background: DEEP, headline: FOAM, subhead: SHALLOW, lines: SHALLOW, lineOpacity: 0.2 },
-  foam: { background: FOAM, headline: INK, subhead: SEA, lines: SEA, lineOpacity: 0.22 },
-  sea: { background: SEA, headline: "#FFFFFF", subhead: "#D7EEEA", lines: "#FFFFFF", lineOpacity: 0.16 },
+export const BACKDROPS: Record<Backdrop, Colors> = {
+  deep: { background: DEEP, headline: FOAM, subhead: SHALLOW, lines: SHALLOW },
+  foam: { background: FOAM, headline: INK, subhead: SEA, lines: SEA },
+  sea: { background: SEA, headline: "#FFFFFF", subhead: "#D7EEEA", lines: "#FFFFFF" },
 };
 
-export function Depths({ width, height, backdrop }: { width: number; height: number; backdrop: Backdrop }) {
-  const b = BACKDROPS[backdrop];
+/** Contour lines across the lower part of the image, each a Path through two sine waves. */
+export function Depths({ width, height, color }: { width: number; height: number; color: string }) {
   const u = width / WIDTH;
   const top = height * 0.43;
-  const lines = Math.ceil((height - top) / (118 * u)) + 1;
+  const spacing = 118 * u;
+  const lines = Math.ceil((height - top) / spacing) + 1;
   const contour = (i: number) => {
-    const base = top + i * 118 * u;
-    const pts = Array.from({ length: 23 }, (_, j) => {
-      const px = j * 60 * u;
-      const py = base + u * (46 * Math.sin(j * 60 / 230 + i * 0.7) + 22 * Math.sin(j * 60 / 97 + i * 1.9));
-      return `${px.toFixed(1)},${py.toFixed(1)}`;
+    const points = Array.from({ length: 23 }, (_, j) => {
+      const x = j * 60;
+      const y = 46 * Math.sin(x / 230 + i * 0.7) + 22 * Math.sin(x / 97 + i * 1.9);
+      return `${(x * u).toFixed(1)},${(top + i * spacing + y * u).toFixed(1)}`;
     });
-    return `M${pts.join(" L")}`;
+    return `M${points.join(" L")}`;
   };
   return (
     <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
       {Array.from({ length: lines }, (_, i) => (
-        <Path key={i} d={contour(i)} style={{ fill: "transparent", stroke: b.lines, strokeWidth: (i % 4 === 0 ? 3 : 1.6) * u, opacity: Math.max(0.05, b.lineOpacity - i * 0.008) }} />
+        // Every fourth line is heavier, as index contours are on a chart; they fade toward the bottom.
+        <Path key={i} d={contour(i)} style={{ fill: "transparent", stroke: color, strokeWidth: (i % 4 === 0 ? 3 : 1.6) * u, opacity: Math.max(0.06, 0.2 - i * 0.008) }} />
       ))}
-      {/* The buoy: you are here. */}
-      <Circle cx={width - 115 * u} cy={top + 260 * u} r={12 * u} style={{ fill: BUOY }} />
-      <Circle cx={width - 115 * u} cy={top + 260 * u} r={28 * u} style={{ fill: "transparent", stroke: BUOY, strokeWidth: 2 * u, opacity: 0.55 }} />
-      <Circle cx={width - 115 * u} cy={top + 260 * u} r={48 * u} style={{ fill: "transparent", stroke: BUOY, strokeWidth: 1.5 * u, opacity: 0.25 }} />
     </Svg>
   );
 }
@@ -366,14 +411,18 @@ export function Depths({ width, height, backdrop }: { width: number; height: num
 // The screenshot.
 // ---------------------------------------------------------------------------------------------
 
-/** The sizes the stores ask for, and how the phone sits in each. */
+/**
+ * The sizes the stores ask for, and how the phone sits in each: its screen's width, the headline's sizes, the
+ * width (measure) and height in px of the box above the phone for the words, and the margin below the phone. The phone is always the same distance from the bottom, so a listing's
+ * screenshots line up side by side whatever their headlines.
+ */
 export const SIZES = {
   /** App Store Connect, iPhone 6.9" (required). */
-  iphone69: { width: 1320, height: 2868, device: "iphone", screenWidth: 860, headline: [128, 116, 104, 96], subhead: 42 },
+  iphone69: { width: 1320, height: 2868, device: "iphone", screenWidth: 860, headline: [128, 116, 104, 96], maxLines: 3, subhead: 42, measure: 1100, words: 640, bottom: 150 },
   /** App Store Connect, iPhone 6.5". */
-  iphone65: { width: 1284, height: 2778, device: "iphone", screenWidth: 836, headline: [124, 112, 100, 92], subhead: 41 },
+  iphone65: { width: 1284, height: 2778, device: "iphone", screenWidth: 836, headline: [124, 112, 100, 92], maxLines: 3, subhead: 41, measure: 1070, words: 600, bottom: 144 },
   /** Google Play, phone, 9:16. */
-  play: { width: 1080, height: 1920, device: "android", screenWidth: 580, headline: [92, 84, 76, 68], subhead: 34 },
+  play: { width: 1080, height: 1920, device: "android", screenWidth: 580, headline: [92, 84, 76, 68], maxLines: 2, subhead: 34, measure: 800, words: 440, bottom: 90 },
 } as const;
 export type Size = keyof typeof SIZES;
 
@@ -384,13 +433,19 @@ export const FONTS: ComponentProps<typeof Canvas>["fonts"] = [
 ];
 
 export type ScreenshotProps = {
-  /** The headline: drawn as large as fits on three lines. */
+  /** The headline: drawn as large as fits in the room above the phone, on three lines at most. */
   headline: string;
   /** A line or two under it. */
   subhead: string;
   /** What's on the phone's screen: an Image of a screenshot, or a screen drawn in elements. */
   screen: ReactNode;
+  /** A preset: its background, words and lines. */
   backdrop?: Backdrop;
+  /** Colors of your own, over the preset's. */
+  colors?: Partial<Colors>;
+  pattern?: Pattern;
+  /** The headline's face: Fraunces, or Inter for a plainer listing. */
+  headlineFont?: "serif" | "sans";
   size?: Size;
   /** The app's name, over the headline. */
   app?: string;
@@ -398,25 +453,28 @@ export type ScreenshotProps = {
 };
 
 /** One screenshot. Call it as a function where the Canvas must be what's returned. */
-export function Screenshot({ headline, subhead, screen, backdrop = "deep", size = "iphone69", app = "Tidewise", fonts = FONTS }: ScreenshotProps) {
+export function Screenshot({ headline, subhead, screen, backdrop = "deep", colors, pattern = "contours", headlineFont = "serif", size = "iphone69", app = "Tidewise", fonts = FONTS }: ScreenshotProps) {
   const s = SIZES[size];
-  const b = BACKDROPS[backdrop];
+  // Your colors over the preset's: only those you give.
+  const c = { ...BACKDROPS[backdrop], ...Object.fromEntries(Object.entries(colors ?? {}).filter(([, value]) => value)) };
   const u = s.width / WIDTH;
+  const serif = headlineFont === "serif";
   return (
-    <Canvas width={s.width} height={s.height} lang="en" title={`${app} on the App Store: ${headline}`} fonts={fonts} style={{ backgroundColor: b.background, color: b.headline, fontFamily: SANS }}>
+    <Canvas width={s.width} height={s.height} lang="en" title={`${app}: ${headline}`} fonts={fonts} style={{ backgroundColor: c.background, color: c.headline, fontFamily: SANS }}>
       <Layer style={{ width: s.width, height: s.height }}>
-        <Depths width={s.width} height={s.height} backdrop={backdrop} />
-        {/* Centered as a block: a longer headline takes from the margins above and below alike. */}
-        <Column style={{ width: s.width, height: s.height, padding: [48 * u, 110 * u], gap: (size === "play" ? 64 : 104) * u, alignItems: "center", justifyContent: "center" }}>
-          <Column style={{ gap: (size === "play" ? 28 : 40) * u, alignItems: "center" }}>
-            <Text style={{ fontSize: 30 * u, fontWeight: 600, letterSpacing: 7 * u, textTransform: "uppercase", textAlign: "center", color: b.subhead }}>{app}</Text>
-            <Heading level={1} field="headline" fit={{ sizes: [...s.headline], maxLines: size === "play" ? 2 : 3 }} style={{ fontFamily: SERIF, fontWeight: 500, lineHeight: 1.02, letterSpacing: -2.5 * u, textAlign: "center", color: b.headline }}>
+        {pattern === "contours" ? <Depths width={s.width} height={s.height} color={c.lines} /> : <Column style={{ width: s.width, height: s.height }} />}
+        <Column style={{ width: s.width, height: s.height, padding: [0, 110 * u, s.bottom * u], alignItems: "center", justifyContent: "end" }}>
+          {/* The words, centered in a box of their own: a longer headline is drawn smaller, never over the phone. */}
+          <Column style={{ width: s.measure, height: s.words, gap: (size === "play" ? 26 : 38) * u, alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ fontSize: 30 * u, fontWeight: 600, letterSpacing: 7 * u, textTransform: "uppercase", textAlign: "center", color: c.subhead }}>{app}</Text>
+            <Heading level={1} field="headline" fit={{ sizes: [...s.headline], maxLines: s.maxLines }} style={{ fontFamily: serif ? SERIF : SANS, fontWeight: serif ? 500 : 600, lineHeight: serif ? 1.02 : 1.04, letterSpacing: (serif ? -2.5 : -3.5) * u, textAlign: "center", color: c.headline }}>
               {headline}
             </Heading>
             <Column style={{ width: 800 * u }}>
-              <Text field="subhead" fit={{ sizes: [s.subhead, s.subhead - 4], maxLines: 2 }} style={{ lineHeight: 1.35, textAlign: "center", color: b.subhead }}>{subhead}</Text>
+              <Text field="subhead" fit={{ sizes: [s.subhead, s.subhead - 4], maxLines: 2 }} style={{ lineHeight: 1.35, textAlign: "center", color: c.subhead }}>{subhead}</Text>
             </Column>
           </Column>
+          <Column style={{ height: (size === "play" ? 56 : 88) * u }} />
           <Phone screenWidth={s.screenWidth} device={s.device}>{screen}</Phone>
         </Column>
       </Layer>

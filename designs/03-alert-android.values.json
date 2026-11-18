@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "template": {
+    "module": "../templates/app-store-screenshot.tsx",
+    "id": "store.Screenshot",
+    "version": "1.0.0",
+    "sha256": "3bf0f003363a1dd713626f7e4bf1ff61b98727d2b202fb0f4bdfe2312690066c"
+  },
+  "formats": [
+    "play"
+  ],
+  "values": {
+    "app": "Tidewise",
+    "headline": "A nudge before slack water.",
+    "subhead": "Pick a beach and a tide. We'll tell you when to go.",
+    "screenshot": {
+      "src": "./screens/alert-android.png",
+      "width": 1080,
+      "height": 2347
+    },
+    "backdrop": "sea",
+    "pattern": "contours",
+    "headlineFont": "serif"
+  },
+  "assets": {
+    "screenshot": {
+      "sha256": "e8a6ae00d6c878b054624b3cbbd3c327778f33713e272aca92ae3a00b4d11181",
+      "source": {
+        "kind": "generated",
+        "tool": "Hyper Elements renderImage()",
+        "script": "scripts/screens.tsx",
+        "note": "The Tidewise app's screens drawn in elements at 1320 by 2868, standing in for simulator captures."
+      }
+    }
+  }
+}

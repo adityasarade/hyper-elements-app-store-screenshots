@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "template": {
+    "module": "../templates/app-store-screenshot.tsx",
+    "id": "store.Screenshot",
+    "version": "1.0.0",
+    "sha256": "3bf0f003363a1dd713626f7e4bf1ff61b98727d2b202fb0f4bdfe2312690066c"
+  },
+  "formats": [
+    "play"
+  ],
+  "values": {
+    "app": "Steady",
+    "headline": "Small habits, kept for good.",
+    "subhead": "See your streak, and get a nudge when it slips.",
+    "screenshot": {
+      "src": "./screens/steady-android.png",
+      "width": 1080,
+      "height": 2347
+    },
+    "backdrop": "foam",
+    "colors": {
+      "background": "#4b32d9",
+      "headline": "#ffffff",
+      "subhead": "#d9d2ff",
+      "lines": "#ffffff"
+    },
+    "pattern": "none",
+    "headlineFont": "sans"
+  },
+  "assets": {
+    "screenshot": {
+      "sha256": "b49f57347e8164c980ced083fe386c8302d29e5b1b5167e3a2e279d01e814fa6",
+      "source": {
+        "kind": "generated",
+        "tool": "Hyper Elements renderImage()",
+        "script": "scripts/screens.tsx",
+        "note": "The Tidewise app's screens drawn in elements at 1320 by 2868, standing in for simulator captures."
+      }
+    }
+  }
+}

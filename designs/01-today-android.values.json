@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "template": {
+    "module": "../templates/app-store-screenshot.tsx",
+    "id": "store.Screenshot",
+    "version": "1.0.0",
+    "sha256": "3bf0f003363a1dd713626f7e4bf1ff61b98727d2b202fb0f4bdfe2312690066c"
+  },
+  "formats": [
+    "play"
+  ],
+  "values": {
+    "app": "Tidewise",
+    "headline": "Know the tide before you leave.",
+    "subhead": "High and low water for 1,400 beaches, to the minute.",
+    "screenshot": {
+      "src": "./screens/today-android.png",
+      "width": 1080,
+      "height": 2347
+    },
+    "backdrop": "deep",
+    "pattern": "contours",
+    "headlineFont": "serif"
+  },
+  "assets": {
+    "screenshot": {
+      "sha256": "95aac1ce5605662472e79e3ad29f9c8f5f5b50aa3552fd6804e38f24025e9f52",
+      "source": {
+        "kind": "generated",
+        "tool": "Hyper Elements renderImage()",
+        "script": "scripts/screens.tsx",
+        "note": "The Tidewise app's screens drawn in elements at 1320 by 2868, standing in for simulator captures."
+      }
+    }
+  }
+}

@@ -2,25 +2,26 @@
   "version": 1,
   "template": {
     "module": "../templates/app-store-screenshot.tsx",
-    "id": "tidewise.StoreScreenshot",
+    "id": "store.Screenshot",
     "version": "1.0.0",
-    "sha256": "42b877dd248ebc7c5c8817d80434e177185026ce455237e763ff0620f059dea9"
+    "sha256": "3bf0f003363a1dd713626f7e4bf1ff61b98727d2b202fb0f4bdfe2312690066c"
   },
   "formats": [
     "iphone69",
-    "iphone65",
-    "play"
+    "iphone65"
   ],
   "values": {
     "app": "Tidewise",
-    "headline": "Every beach nearby, at its best hour.",
+    "headline": "Find the beach that suits the tide.",
     "subhead": "Swim, surf or rock pools: sorted by what the tide is doing.",
     "screenshot": {
       "src": "./screens/beaches.png",
       "width": 1320,
       "height": 2868
     },
-    "backdrop": "foam"
+    "backdrop": "foam",
+    "pattern": "contours",
+    "headlineFont": "serif"
   },
   "assets": {
     "screenshot": {

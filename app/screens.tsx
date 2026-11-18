@@ -5,9 +5,10 @@
  */
 import { Circle, Column, Layer, Line, Path, Polygon, Rect, Row, Svg, Text } from "@hyper-elements/react";
 import type { ReactNode } from "react";
+import { SteadyScreen } from "./steady.tsx";
 import {
   BUOY, DEEP, INK, MUTED, PAPER, RULE, SANS, SEA, SERIF, SHALLOW,
-  StatusBar, TabBar, TodayScreen, clock, heightAt, type Tide,
+  StatusBar, TabBar, TodayScreen, clock, heightAt, type OS, type Tide,
 } from "../src/tidewise-app-store.tsx";
 
 const NOW = 9.68;
@@ -32,7 +33,7 @@ const TONES = {
   pools: { fill: "#FDE6DD", text: "#8A3418" },
 };
 
-export function BeachesScreen({ k }: { k: number }) {
+export function BeachesScreen({ k, os = "ios" }: { k: number; os?: OS }) {
   const p = (n: number) => Math.round(n * k * 100) / 100;
   // Each beach's next 12 hours, as a line, with now at its left.
   const SW = 88;
@@ -46,7 +47,7 @@ export function BeachesScreen({ k }: { k: number }) {
   return (
     <Column style={{ width: p(440), height: p(956), backgroundColor: PAPER, color: INK, fontFamily: SANS, justifyContent: "space-between" }}>
       <Column style={{ gap: p(16) }}>
-        <StatusBar k={k} time={NOW} />
+        <StatusBar k={k} time={NOW} os={os} />
         <Column style={{ padding: [0, p(22)], gap: p(16) }}>
           <Column style={{ gap: p(4) }}>
             <Text style={{ fontFamily: SERIF, fontSize: p(34), fontWeight: 600, letterSpacing: p(-0.4), lineHeight: 1.1 }}>Beaches</Text>
@@ -95,13 +96,13 @@ export function BeachesScreen({ k }: { k: number }) {
           </Column>
         </Column>
       </Column>
-      <TabBar k={k} active={1} />
+      <TabBar k={k} active={1} os={os} />
     </Column>
   );
 }
 
 /** The lock screen at dusk, with the alert that slack water is near. */
-export function AlertScreen({ k }: { k: number }) {
+export function AlertScreen({ k, os = "ios" }: { k: number; os?: OS }) {
   const p = (n: number) => Math.round(n * k * 100) / 100;
   const t = tide(11.87, 1.75);
   const now = 11.53;
@@ -153,7 +154,7 @@ export function AlertScreen({ k }: { k: number }) {
       </Svg>
       <Column style={{ width: p(W), height: p(H), justifyContent: "space-between", color: white, fontFamily: SANS }}>
         <Column style={{ gap: p(6), alignItems: "center" }}>
-          <StatusBar k={k} time={now} color={white} label="Tidewise 5G" />
+          <StatusBar k={k} time={now} color={white} label="Tidewise 5G" os={os} />
           <Text style={{ fontSize: p(21), fontWeight: 600, textAlign: "center", color: "#F4EBDD", padding: [p(10), 0, 0] }}>Thursday 12 March</Text>
           <Text style={{ fontFamily: SERIF, fontSize: p(104), fontWeight: 500, lineHeight: 1, letterSpacing: p(-2), textAlign: "center", color: "#FBF4E8" }}>
             {clock(now)}
@@ -213,8 +214,10 @@ export function AlertScreen({ k }: { k: number }) {
   );
 }
 
-export const SCREENS: Record<string, (k: number) => ReactNode> = {
-  today: (k) => <TodayScreen k={k} />,
-  beaches: (k) => <BeachesScreen k={k} />,
-  alert: (k) => <AlertScreen k={k} />,
+export const SCREENS: Record<string, (k: number, os: OS) => ReactNode> = {
+  today: (k, os) => <TodayScreen k={k} os={os} />,
+  beaches: (k, os) => <BeachesScreen k={k} os={os} />,
+  alert: (k, os) => <AlertScreen k={k} os={os} />,
+  // Another app altogether, to show the template isn't Tidewise's alone.
+  steady: (k, os) => <SteadyScreen k={k} os={os} />,
 };
