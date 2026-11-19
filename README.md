@@ -1,7 +1,8 @@
 # Store screenshots
 
 **A Hyper Elements template for App Store and Google Play screenshots: your app's raw capture, framed in a phone
-drawn in Svg under a headline fitted to the space, at every size the stores ask for.**
+drawn in Svg under a headline fitted to the space, at the portrait sizes App Store Connect and Google Play ask
+for, as RGB PNGs ready to upload.**
 
 ![Four App Store screenshots. Three for Tidewise, a fictional tide-times app ("Know the tide before you leave." on deep green, "Find the beach that suits the tide." on foam, "A nudge before slack water." on sea blue), and one for Steady, a fictional habit tracker, on violet with a sans headline.](docs/hero.jpg)
 
@@ -19,25 +20,26 @@ Tidewise and Steady are fictional apps; their screens are drawn with Hyper Eleme
 git clone https://github.com/adityasarade/hyper-elements-app-store-screenshots
 cd hyper-elements-app-store-screenshots
 npm install
-npm run render        # every design in designs/ → out/designs/*.png
+npm run render        # every design in designs/ → out/designs/*.png, RGB with no alpha, as the stores require
 ```
 
 Make your own. Capture a screen in the iPhone 16 Pro Max or 17 Pro Max simulator
-(`xcrun simctl io booted screenshot capture.png`, 1320 by 2868), write a brief, and render:
+(`xcrun simctl io booted screenshot capture.png`, 1320 by 2868), write a brief, and make one values file per store:
 
 ```bash
-cat > brief.json <<'EOF'
+cat > brief.json <<'JSON'
 { "app": "Your App", "headline": "Plan the week in a minute.", "subhead": "Every task, every person, on one calm board.",
   "colors": { "background": "#123B2C", "headline": "#FFFFFF", "subhead": "#BFE3D2" }, "pattern": "none", "headlineFont": "sans" }
-EOF
-npx hyper-elements design new templates/app-store-screenshot.tsx -o designs/plan.values.json \
-  --values brief.json --set screenshot=@capture.png
-npx hyper-elements render designs/plan.values.json --out out
-# → out/designs/plan.iphone69.png, plan.iphone65.png, plan.play.png
+JSON
+npm run new -- plan brief.json capture.png                 # → designs/plan.values.json (iPhone 6.9" and 6.5")
+npm run new -- plan brief.json android-capture.png --play  # → designs/plan-android.values.json (Google Play)
+npm run render -- designs/plan.values.json designs/plan-android.values.json
+# → out/designs/plan.iphone69.png, plan.iphone65.png, plan-android.play.png
 ```
 
-For Google Play, make a second values file with the Android capture and keep only `"play"` in its `formats`
-(see [`designs/01-today-android.values.json`](designs/01-today-android.values.json)).
+`npm run new` runs `hyper-elements design new` (the template checks the brief and the capture) and keeps only that
+store's formats in the file; `npm run render` runs `hyper-elements render` and writes each PNG without its alpha
+channel.
 
 A values file is data, so it's safe to generate from a CMS, a spreadsheet or an agent: nothing in it runs. Change
 one value later with `npx hyper-elements design set designs/plan.values.json headline="…"`. The template refuses a
@@ -59,14 +61,14 @@ contour lines off, and `headlineFont` switches the headline from Fraunces to Int
 
 ![The Steady habit tracker's raw capture beside its store screenshot on violet.](docs/another-app.jpg)
 
-## Every size the stores ask for
+## Three store sizes
 
-![The first Tidewise screenshot at iPhone 6.9", iPhone 6.5" and Google Play phone size. The Play version draws an Android phone with a punch-hole camera around an Android capture.](docs/three-sizes.jpg)
+![The first Tidewise screenshot at iPhone 6.9", iPhone 6.5" and Google Play phone size. The 6.5" draws a notch; the Play version an Android phone with a punch-hole camera around an Android capture.](docs/three-sizes.jpg)
 
 | Format | Size | Store | Phone |
 |--------|------|-------|-------|
 | `iphone69` | 1320 × 2868 | App Store Connect, iPhone 6.9" (the size it requires) | iPhone, Dynamic Island |
-| `iphone65` | 1284 × 2778 | App Store Connect, iPhone 6.5" | iPhone, Dynamic Island |
+| `iphone65` | 1284 × 2778 | App Store Connect, iPhone 6.5" | iPhone, notch (as the 6.5" iPhones have) |
 | `play` | 1080 × 1920 | Google Play, phone | Android, punch-hole camera |
 
 The phone sits the same distance from the bottom in every screenshot of a size, so a listing lines up side by side
@@ -80,8 +82,8 @@ whatever its headlines say. The headline is fitted to the room above the phone.
 `renderImage()` from `@hyper-elements/react/image`.
 
 - **The phone is drawn, not pasted.** Its body is two rounded `Column`s; its screen is a `Layer` whose first child is
-  the screenshot (it fills the screen, cropped from the center) and whose second is the Dynamic Island or the
-  Android camera, drawn in `Svg` over it.
+  the screenshot (it fills the screen, cropped from the center) and whose second is the Dynamic Island, the notch or
+  the Android camera, drawn in `Svg` over it.
 - **The headline is fitted text.** `fit={{ sizes: [128, 116, 104, 96], maxLines: 3 }}` inside a fixed-height box
   draws it at the largest size that fits, measured with the real fonts. The subhead is fitted the same way.
 - **The backdrop** is contour lines drawn as `Path`s, under a `Layer` with the words and the phone.

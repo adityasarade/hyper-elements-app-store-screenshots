@@ -341,18 +341,27 @@ export const SCREEN_ASPECT = WIDTH / HEIGHT;
  * `screenWidth` px across its screen. The screen is the first child of a Layer, so a screenshot given as an
  * Image fills it, cropped from the center; the island or the camera is drawn over it.
  */
-export function Phone({ screenWidth, device = "iphone", children }: { screenWidth: number; device?: "iphone" | "android"; children: ReactNode }) {
+export function Phone({ screenWidth, device = "iphone", children }: { screenWidth: number; device?: "iphone" | "notch" | "android"; children: ReactNode }) {
   const u = screenWidth / 860;
   const screenHeight = Math.round(screenWidth / SCREEN_ASPECT);
-  const iphone = device === "iphone";
+  const iphone = device !== "android";
   const [outer, inner, screen] = iphone ? [136, 129, 114].map((r) => r * u) : [92, 86, 70].map((r) => r * u);
+  // The notch of a 6.5" iPhone: half the screen wide, flat on top, rounded below, with a small curve into the edge.
+  const nw = Math.round(screenWidth * 0.5);
+  const nh = Math.round(screenHeight * 0.034);
+  const [ear, round] = [10 * u, 26 * u];
+  const notch = `M0 0 H${nw} C${nw - ear * 0.5} 0 ${nw - ear} ${ear * 0.4} ${nw - ear} ${ear} V${nh - round} Q${nw - ear} ${nh} ${nw - ear - round} ${nh} H${ear + round} Q${ear} ${nh} ${ear} ${nh - round} V${ear} C${ear} ${ear * 0.4} ${ear * 0.5} 0 0 0 Z`;
   return (
     <Column style={{ width: screenWidth + 44 * u, backgroundColor: GRAPHITE, borderRadius: outer, padding: 7 * u }}>
       <Column style={{ width: screenWidth + 30 * u, backgroundColor: GLASS, borderRadius: inner, padding: 15 * u }}>
         <Layer style={{ width: screenWidth, height: screenHeight, borderRadius: screen, justifyItems: "center", alignItems: "start" }}>
           {children}
-          <Column style={{ padding: [(iphone ? 22 : 30) * u, 0, 0, 0] }}>
-            {iphone ? (
+          <Column style={{ padding: [device === "notch" ? 0 : (iphone ? 22 : 30) * u, 0, 0, 0] }}>
+            {device === "notch" ? (
+              <Svg width={nw} height={nh} viewBox={`0 0 ${nw} ${nh}`} title="The notch">
+                <Path d={notch} style={{ fill: GLASS }} />
+              </Svg>
+            ) : iphone ? (
               <Svg width={254 * u} height={74 * u} viewBox="0 0 254 74" title="The Dynamic Island">
                 <Rect x={0} y={0} width={254} height={74} rx={37} style={{ fill: GLASS }} />
               </Svg>
@@ -418,11 +427,11 @@ export function Depths({ width, height, color }: { width: number; height: number
  */
 export const SIZES = {
   /** App Store Connect, iPhone 6.9" (required). */
-  iphone69: { width: 1320, height: 2868, device: "iphone", screenWidth: 860, headline: [128, 116, 104, 96], maxLines: 3, subhead: 42, measure: 1100, words: 640, bottom: 150 },
-  /** App Store Connect, iPhone 6.5". */
-  iphone65: { width: 1284, height: 2778, device: "iphone", screenWidth: 836, headline: [124, 112, 100, 92], maxLines: 3, subhead: 41, measure: 1070, words: 600, bottom: 144 },
+  iphone69: { width: 1320, height: 2868, device: "iphone", screenWidth: 860, headline: [128, 116, 104, 96], maxLines: 3, subhead: 48, measure: 1100, words: 640, bottom: 150 },
+  /** App Store Connect, iPhone 6.5": the iPhones of that size have a notch. */
+  iphone65: { width: 1284, height: 2778, device: "notch", screenWidth: 836, headline: [124, 112, 100, 92], maxLines: 3, subhead: 47, measure: 1070, words: 600, bottom: 144 },
   /** Google Play, phone, 9:16. */
-  play: { width: 1080, height: 1920, device: "android", screenWidth: 580, headline: [92, 84, 76, 68], maxLines: 2, subhead: 34, measure: 800, words: 440, bottom: 90 },
+  play: { width: 1080, height: 1920, device: "android", screenWidth: 580, headline: [92, 84, 76, 68], maxLines: 2, subhead: 38, measure: 800, words: 440, bottom: 90 },
 } as const;
 export type Size = keyof typeof SIZES;
 
