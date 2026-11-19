@@ -139,13 +139,12 @@ it. `npx tsc --noEmit` passes.
 
 ## Add it to the gallery
 
-Copy [`src/tidewise-app-store.tsx`](src/tidewise-app-store.tsx) to `apps/website/examples/templates/`. It has the
-gallery's `meta` and renders with no props. It needs no image files: in this version the phone's screen is drawn in
-elements.
+Copy [`src/tidewise-app-store.tsx`](src/tidewise-app-store.tsx) to `apps/website/examples/templates/`. It has the gallery's `meta` and renders with no props.
+It needs no image files: in this version the phone's screen is drawn in elements.
 
 We tested exactly that: the file, unchanged, in a local clone of the Hyper Elements site, through the site's own
-generator (`pnpm generate`) and dev server. It rendered with 2 notes (the HTML preview draws fitted text at its
-largest size), and appears on `/templates/tidewise-app-store` like the official designs:
+generator (`pnpm generate`) and dev server. It rendered with 2 notes, both `info` (the HTML preview draws fitted text at its largest size; the PNG measures it), and appears on `/templates/tidewise-app-store` beside the
+official designs:
 
 ![The design on its page in a local build of the Hyper Elements template gallery, with its preview and source.](docs/in-the-gallery.jpg)
 
