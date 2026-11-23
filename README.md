@@ -14,6 +14,32 @@ fits, and nothing runs off the edge.
 
 Tidewise and Steady are fictional apps; their screens are drawn with Hyper Elements too.
 
+## In the official templates folder, in all nine sample brands
+
+On 23 November the Hyper Elements team rebuilt their gallery around a `templates/` folder anyone can contribute to,
+where each template is made from a brand and tested in all nine sample brands. This one is ported to that format:
+[`community-template/images/store-screenshot/`](community-template/images/store-screenshot/template.tsx) is `storeScreenshot(brand)`, which takes every
+color, font and logo from the brand it's given and sets none of its own: the backdrop in the brand's color or its paper, the headline in its heading face (a serif in Pith, monospace in Quarry), and the phone's glass in the darker of its ink and paper, so the island stays dark in a light brand and a dark one; the three store sizes are a field. Its default brand is
+Orbit, and its two designs are in `designs/`.
+
+![The same template in each of the nine sample brands: Oyen, Orbit, Quarry, Pith, Ember, Casa Albero, Keel, Pell & Ashby and Slow Signals.](docs/st-nine-brands.gif)
+
+The gallery's own test checks the template's example and both designs against its fields and rules, and renders them,
+in every brand. To run it yourself from a fresh clone of the official repository:
+
+```
+$ bash scripts/verify-in-gallery.sh
+ ✓ images/store-screenshot > has designs
+ ✓ images/store-screenshot > passes its check in casa-albero, with its example and each design
+ ✓ images/store-screenshot > passes its check in ember, with its example and each design
+   … keel, orbit, oyen, pell-ashby, pith, quarry, slow-signals
+ Tests  11 passed
+```
+
+To add it to the gallery, copy `community-template/` into the repository's `templates/`.
+
+[All nine brands side by side](docs/st-nine-brands.jpg)
+
 ## Use it
 
 ```bash
